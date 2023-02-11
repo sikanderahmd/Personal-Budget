@@ -2,16 +2,19 @@ const express = require('express');
 const envelopeRouter = express.Router()
 
 
+//Dummy budget envelopes
 const envelopes = 
 [{id: 1, name: 'Fuel', budget: 30000}, 
 {id: 2, name: 'Groceries', budget: 20000},
 {id: 3, name: 'Rent', budget: 40000}]
 
-
+//Get all envelopes
 envelopeRouter.get('/', (req, res, next) => {
     res.send(envelopes);
 })
 
+
+//Get a specific Envelope
 envelopeRouter.get('/:envelopeId', (req, res, next) => {
     const envelopeId = req.params.envelopeId;
     const envelopeIndex = envelopes.findIndex(envelope => {
@@ -25,12 +28,14 @@ envelopeRouter.get('/:envelopeId', (req, res, next) => {
     }
 })
 
+//Add a new envelope
 envelopeRouter.post('/', (req, res, next) => {
     const newEnvelope = req.body;
     envelopes.push(newEnvelope);
     res.status(200).send(envelopes);
 })
 
+//Transfer money from one envelope to another
 envelopeRouter.post('/transfer/:sender/:receiver', (req, res, next) => {
     const senderId = req.params.sender;
     const receiverId = req.params.receiver;
@@ -60,6 +65,8 @@ envelopeRouter.post('/transfer/:sender/:receiver', (req, res, next) => {
     }
 })
 
+
+//Edit or update an envelope
 envelopeRouter.put('/:envelopeId', (req, res, next) => {
     const envelopeId = req.params.envelopeId;
     const envelopeIndex = envelopes.findIndex(envelope => {
@@ -76,6 +83,7 @@ envelopeRouter.put('/:envelopeId', (req, res, next) => {
 
 })
 
+//Delete an envelope
 envelopeRouter.delete('/:envelopeId', (req, res, next) => {
     const envelopeId = req.params.envelopeId;
     const envelopeIndex = envelopes.findIndex(envelope => {
