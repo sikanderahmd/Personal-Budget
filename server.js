@@ -2,10 +2,8 @@ const express = require('express');
 const app = express();
 
 
-
-app.get('/', (req, res, next) => {
-    res.send('Working');
-})
+const envelopeRouter = require('./envelopes');
+app.use('/envelopes', envelopeRouter);
 
 
 app.listen(4001, () => {
