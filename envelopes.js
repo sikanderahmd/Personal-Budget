@@ -1,6 +1,5 @@
 const express = require('express');
 const envelopeRouter = express.Router()
-const prompt = require('prompt-sync')
 
 
 const envelopes = 
@@ -32,6 +31,35 @@ envelopeRouter.post('/', (req, res, next) => {
     res.status(200).send(envelopes);
 })
 
+envelopeRouter.post('/transfer/:sender/:receiver', (req, res, next) => {
+    const senderId = req.params.sender;
+    const receiverId = req.params.receiver;
+
+    const senderIndex = envelopes.findIndex(envelope => {
+        return envelope.id === Number(senderId)
+    })
+    const receiverIndex = envelopes.findIndex(envelope => {
+        return envelope.id === Number(receiverId)
+    })
+
+    const transferAmount = Number(req.query.transferAmount);
+
+    if(senderIndex !== -1 && receiverIndex !== -1){
+        if(envelopes[senderIndex].budget >= transferAmount){
+            envelopes[senderIndex].budget -= transferAmount;
+            envelopes[receiverIndex].budget += transferAmount;
+            res.send(envelopes)
+        }
+        else { 
+            res.status(404).send('Insufficient balance in sender account!')
+        }
+        
+    }
+    else {
+        res.status(404).send('Sender or receiver ID invalid!')
+    }
+})
+
 envelopeRouter.put('/:envelopeId', (req, res, next) => {
     const envelopeId = req.params.envelopeId;
     const envelopeIndex = envelopes.findIndex(envelope => {
@@ -46,6 +74,20 @@ envelopeRouter.put('/:envelopeId', (req, res, next) => {
         res.status(404).send('Envelope not found!')
     }
 
+})
+
+envelopeRouter.delete('/:envelopeId', (req, res, next) => {
+    const envelopeId = req.params.envelopeId;
+    const envelopeIndex = envelopes.findIndex(envelope => {
+        return envelope.id === Number(envelopeId);
+    })
+    if(envelopeIndex !== -1){
+        envelopes.splice(envelopeIndex, 1);
+        res.status(204).send(envelopes)
+    }
+    else {
+        res.status(500).send()
+    }
 })
 
 
